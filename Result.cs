@@ -1,6 +1,4 @@
-
-public abstract record Result<T, E>
-{
-    public sealed record Ok(T Val) : Result<T, E>;
-    public sealed record Err(E Err) : Result<T, E>;
-}
+public abstract record Result{
+    public record Ok(T Val) : Result;
+    public record Err(E Err) : Result;
+};
