@@ -1,13 +1,11 @@
 
 using System;
 
-Result<int> Divide(int a, int b) => b == 0 
-    ? new Result<int>.Failure("Cannot divide by zero") 
-    : new Result<int>.Success(a / b);
+Result result = new Result.Ok(1);
 
-var result = Divide(10, 2);
-var output = result.Match(
-    success: value => $"Result: {value}",
-    failure: error => $"Error: {error}"
-);
-Console.WriteLine(output);
+string msg = result switch {
+    Result.Ok ok => ok.Val.ToString(),
+    Result.Err err => err.Err.ToString(),
+};
+
+Console.WriteLine(msg);

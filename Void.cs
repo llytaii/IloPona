@@ -1,1 +1,1 @@
-public record struct Void();
+public record Void();
