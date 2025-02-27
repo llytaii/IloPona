@@ -1,28 +1,27 @@
-using System;
-
-public abstract record Result
+public static class Result
 {
-    public static Result<V> Ok<V>(V val) => new ResultOk<V>(val);
-    public static Result<object> Fail(Exception ex) => new ResultError<object>(ex);
+  public static Result<V, object> Ok<V>(V value) where V : notnull
+      => new Result<V, object>.Ok(value);
+
+  public static Result<object, E> Fail<E>(E error) where E : notnull
+      => new Result<object, E>.Fail(error);
 }
 
-public abstract record Result<V>
+public abstract record Result<V, E>
+    where V : notnull
+    where E : notnull
 {
-    public bool IsOk => this is ResultOk<V>;
+  public bool IsOk => this is Ok;
+  public V Value => ((Ok)this).Val;
+  public E Error => ((Fail)this).Err;
 
-    public V Val => this switch {
-        ResultOk<V> r => r.val,
-        _ => throw new InvalidOperationException($"No VALUE on {this.GetType()}")
-    };
+  public record Ok(V Val) : Result<V, E>;
+  public record Fail(E Err) : Result<V, E>;
 
-    public Exception Ex => this switch {
-        ResultError<V> r => r.ex,
-        _ => throw new InvalidOperationException($"No ERROR on {this.GetType()}")
-    };
+  public static implicit operator Result<V, E>(Result<V, object> other)
+      => new Ok(other.Value);
 
+  public static implicit operator Result<V, E>(Result<object, E> other)
+      => new Fail(other.Error);
 }
 
-internal record ResultOk<V>(V val) : Result<V>;
-internal record ResultError<V>(Exception ex) : Result<V>;
-
-    
