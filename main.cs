@@ -1,11 +1,17 @@
 
 using System;
 
-Result result = new Result.Ok(1);
+Result<int> TryParse(string number){
+  if(int.TryParse(number, out int result))
+    return Result.Ok(result);
+  return Result.Fail(new Exception("Could not parse number"));
+}
 
-string msg = result switch {
-    Result.Ok ok => ok.Val.ToString(),
-    Result.Err err => err.Err.ToString(),
-};
+var parsingResult = TryParse("test");
 
-Console.WriteLine(msg);
+if(parsingResult.IsOk){
+  Console.WriteLine(parsingResult.Val);
+} else {
+  Console.WriteLine($"Parsing failed: {parsingResult.Ex.Message}!");
+}
+
