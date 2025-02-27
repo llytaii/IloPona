@@ -18,6 +18,9 @@ public abstract record Result<V, E>
   public record Ok(V Val) : Result<V, E>;
   public record Fail(E Err) : Result<V, E>;
 
+public static implicit operator Result<V, E>(Result<object, object> other)
+    => other.IsOk ? new Ok(((Ok)other).Value) : new Fail(((Fail)other).Error);
+
   public static implicit operator Result<V, E>(Result<V, object> other)
       => new Ok(other.Value);
 
